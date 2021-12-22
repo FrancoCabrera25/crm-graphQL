@@ -1,4 +1,4 @@
-const { gql } = require("apollo-server");
+const {gql} = require("apollo-server");
 // Schema
 
 const typeDefs = gql`     
@@ -11,33 +11,48 @@ const typeDefs = gql`
          create_At: String
       }
       
+      type Token {
+            token: String
+      }
+      
+       type Product {
+            id: ID
+            name: String
+            stock: Int
+            price: Float     
+            create_At: String   
+      }
+      
+      
       input UsuarioInput {
             name: String!
             lastname: String!
             email: String!
             password: String!    
+      }
+      
+      input AuthUserInput {
+            email: String!
+            password: String!
       }      
- 
-       type Curse {
-           title: String
-       }
+      
+      input ProductInput {
+            name: String!
+            stock: Int!
+            price: Float!            
+      }
        
-       input CurseInput {
-            tecnology: String 
-       }
-       
-       type Tecnology {
-           tecnology: String 
-       }       
        type Query {
-                getCurses : Curse
-                getCurse(input: CurseInput ) : [Curse]
-                getAllCurses : [Curse]
-                getAllTecnology : [Tecnology]
+            getUser(token: String!): User
        }
        
        type Mutation {
+            #User
             createUser(input: UsuarioInput) : User
+            authUser(input: AuthUserInput): Token
+            
+            #Product
+            createProduct(input: ProductInput): Product
        }
        
 `;
