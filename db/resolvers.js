@@ -20,6 +20,24 @@ const resolvers = {
             const userId = await jwt.verify(token, process.env.CLAVE_SECRETA);
 
             return userId;
+        },
+        getProduct: async () => {
+            try {
+                return await Product.find({});
+            } catch (e) {
+                console.log(e)
+            }
+        },
+        getProductById: async (_, {id}) => {
+            try {
+                const product = await Product.findById(id);
+                if (!product) {
+                    throw new Error("Producto no encontrado");
+                }
+                return product;
+            } catch (e) {
+                return e;
+            }
         }
     },
     Mutation: {
@@ -36,8 +54,7 @@ const resolvers = {
             try {
                 // guardar datos
                 const doc = new User(input);
-                doc.save();
-                return doc;
+                return await doc.save();
             } catch (e) {
                 console.log(e);
             }
@@ -67,6 +84,33 @@ const resolvers = {
                 return await product.save();
             } catch (e) {
                 throw new Error("Error al crear un nuevo producto");
+            }
+        },
+        updateProduct: async (_, {id, input}) => {
+            try {
+                let product = await Product.findById(id);
+                if (!product) {
+                    throw new Error("Producto no encontrado");
+                }
+
+                return await Product.findOneAndUpdate({_id: id}, input, {new: true});
+
+            } catch (e) {
+                return e;
+            }
+        },
+        deleteProduct: async (_, {id}) => {
+            try{
+                let product = await Product.findById(id);
+                if (!product) {
+                    throw new Error("Producto no encontrado");
+                }
+
+                await Product.findOneAndDelete({_id: id});
+
+                return "Producto eliminado correctamente";
+            }catch (e){
+                return e
             }
         }
     }
