@@ -1,5 +1,10 @@
 const User = require("../models/user");
 const Product = require("../models/product");
+const Client = require("../models/client");
+const {errorType, errorName} = require("../constants/errors");
+const {
+    ApolloError,
+} = require("apollo-server");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config({
@@ -12,6 +17,20 @@ const createToken = (usuario, claveSecreta, expiresIn) => {
     return jwt.sign({id, name, lastname, email}, claveSecreta, {expiresIn});
 }
 
+class CustomError extends ApolloError {
+    constructor(message, code) {
+        super(message, code);
+
+        Object.defineProperty(this, message, {value: 'CustomError'});
+    }
+}
+
+const isUserAutorizado = (context) => {
+    if (!context.user) {
+        throw new CustomError('Usuario no autorizado', errorName.UNAUTHORIZED);
+    }
+    return true;
+}
 
 // resolvers
 const resolvers = {
@@ -36,6 +55,36 @@ const resolvers = {
                 }
                 return product;
             } catch (e) {
+                return e;
+            }
+        },
+        getClients: async () => {
+            try {
+                    return await Client.find({});
+            }catch (e){
+
+            }
+        },
+        getClientsBySeller: async (_,{},ctx) => {
+            try {
+                const seller = ctx.user.id;
+                return await  Client.find({seller});
+            }catch (e){
+
+            }
+        },
+        getClientByID: async (_, {id}, ctx) =>{
+            try{
+                const client = await  Client.findById(id);
+
+                if(!client){
+                    throw new CustomError('Client no Encontrado', errorName.INTERNAL_ERROR_SERVER);
+                }
+                if(client.seller.toString() !== ctx.user.id){
+                    throw new CustomError('No esta autorizado para ver el cliente', errorName.UNAUTHORIZED);
+                }
+                return  client;
+            }catch (e) {
                 return e;
             }
         }
@@ -99,20 +148,57 @@ const resolvers = {
                 return e;
             }
         },
-        deleteProduct: async (_, {id}) => {
-            try{
-                let product = await Product.findById(id);
-                if (!product) {
-                    throw new Error("Producto no encontrado");
+        deleteProduct: async (_, {id}, ctx) => {
+            try {
+                if (isUserAutorizado(ctx)) {
+                    let product = await Product.findById(id);
+                    if (!product) {
+                        throw new CustomError("Producto no encontrado", errorName.INTERNAL_ERROR_SERVER);
+                    }
+
+                    await Product.findOneAndDelete({_id: id});
+
+                    return "Producto eliminado correctamente";
+                }
+            } catch
+                (e) {
+                return e;
+            }
+
+        },
+        createClient: async (_, {input}, ctx) => {
+            try {
+                console.log('ctx.user.id', ctx);
+                const {dni} = input;
+                const client = await Client.findOne({dni});
+                if (client) {
+                    throw new CustomError(`El client con el dni ${dni} ya se encuentra registrado`, errorName.INTERNAL_ERROR_SERVER);
                 }
 
-                await Product.findOneAndDelete({_id: id});
-
-                return "Producto eliminado correctamente";
-            }catch (e){
-                return e
+                const newClient = new Client(input);
+                newClient.seller = ctx.user.id;
+                return await newClient.save();
+            } catch (e) {
+                return e;
             }
-        }
+        },
+        updateClient: async (_, {id, input}, ctx) => {
+            try {
+                let client = await Client.findById(id);
+                if (!client) {
+                    throw new CustomError("Producto no encontrado", errorName.INTERNAL_ERROR_SERVER);
+                }
+
+                if(client.seller.toString() !== ctx.user.id){
+                    throw new CustomError('No esta autorizado para actualizar el cliente', errorName.UNAUTHORIZED);
+                }
+
+                return await Product.findOneAndUpdate({_id: id}, input, {new: true});
+
+            } catch (e) {
+                return e;
+            }
+        },
     }
 }
 

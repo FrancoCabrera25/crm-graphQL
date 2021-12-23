@@ -20,6 +20,7 @@
   "homepage": "https://github.com/FrancoCabrera25/crm-graphQL#readme",
   "dependencies": {
     "apollo-server": "^3.5.0",
+    "apollo-server-errors": "^3.3.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^10.0.0",
     "jsonwebtoken": "^8.5.1",
