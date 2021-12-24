@@ -1,18 +1,17 @@
 const { ApolloServer, AuthenticationError, ApolloError}  = require("apollo-server");
 const typeDefs = require("./db/schema");
 const resolvers = require("./db/resolvers");
-const  conectarDB = require("./config/db");
+const  conectDB = require("./config/db");
 const jwt = require("jsonwebtoken");
 const { errorType, errorName} = require("./constants/errors");
+
 require("dotenv").config({
 
     path: '.env.local'
 })
 
-
-
 // conectar DB
- conectarDB();
+  conectDB();
 
 const getErrorCode = (errorName, message) => {
     let error = errorType[errorName];

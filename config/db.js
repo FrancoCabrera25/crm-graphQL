@@ -4,7 +4,7 @@ require("dotenv").config({
     path: '.env.local'
 })
 
-const conectarDB = async () => {
+const conectDB = async () => {
     try{
         await mongoose.connect(process.env.DB_MONGO, {
                 useNewUrlParser: true,
@@ -17,4 +17,4 @@ const conectarDB = async () => {
     }
 }
 
-module.exports = conectarDB;
+module.exports = conectDB;
