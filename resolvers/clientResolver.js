@@ -12,14 +12,6 @@ require("dotenv").config({
 
 const Client_DELETE = 'Cliente eliminado correctamente';
 
-class CustomError extends ApolloError {
-    constructor(message, code) {
-        super(message, code);
-
-        Object.defineProperty(this, message, {value: 'CustomError'});
-    }
-}
-
 // resolver
 const clientResolver = {
     Query: {

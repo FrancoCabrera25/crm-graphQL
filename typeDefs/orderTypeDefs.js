@@ -36,7 +36,9 @@ const orderTypeDefs = gql`
       }
        type Query {
             #Order
-            getOrder(id: ID): String   
+            getOrders: [Order]
+            getOrdersBySeller: [Order]
+            getOrderById(id: ID!): Order   
         }
 
         type Mutation {

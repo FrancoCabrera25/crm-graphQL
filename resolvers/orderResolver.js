@@ -1,8 +1,9 @@
 const Order = require("../models/order");
 const {getClientByID, isClientSellerSameUserContext} = require("../services/clientServices");
 const {validateStockProduct, updateStockProduct} = require("../services/productService");
-const {createOrder} = require('../services/orderServices');
-
+const {createOrder, getAllOrder, getOrderBySeller, getOrderById } = require('../services/orderServices');
+const {errorName} = require("../constants/errors");
+const customError = require("../utils/customErrors");
 require("dotenv").config({
 
     path: '.env.local'
@@ -11,12 +12,28 @@ require("dotenv").config({
 // resolver
 const orderResolver = {
     Query: {
-        getOrder: async () => {
+        getOrders: async () => {
             try {
+                return await getAllOrder();
             } catch (e) {
-
+                return e;
             }
         },
+        getOrdersBySeller: async (_, {}, ctx ) => {
+            return await getOrderBySeller(ctx.user.id);
+        },
+        getOrderById: async (_, {id}, ctx) => {
+            try {
+                const client = await getOrderById(id);
+
+                if (client.seller.toString() !== ctx.user.id) {
+                    throw new customError('No esta autorizado para ver el pedido', errorName.UNAUTHORIZED);
+                }
+                return client;
+            } catch (e) {
+                return e;
+            }
+        }
     },
     Mutation: {
         createOrder: async (_, {input}, ctx) => {

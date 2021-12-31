@@ -10,6 +10,8 @@ exports.errorName = {
 
     NOT_FOUND_PRODUCT_BY_ID: 'NOT_FOUND_PRODUCT_BY_ID',
     NOT_AVAILABLE_STOCK_PRODUCT: 'NOT_AVAILABLE_STOCK_PRODUCT',
+
+    NOT_FOUND_ORDER_BY_ID: 'NOT_FOUND_ORDER_BY_ID',
 }
 
 exports.errorType = {
@@ -47,6 +49,10 @@ exports.errorType = {
     },
     INTERNAL_ERROR_GET_ALL_CLIENT_BY_SELLER: {
         message: 'Ocurrio un error obteniendo los clientes del vendedor',
+        statusCode: 500
+    },
+    NOT_FOUND_ORDER_BY_ID: {
+        message: 'Pedido no encontrado',
         statusCode: 500
     }
 }
