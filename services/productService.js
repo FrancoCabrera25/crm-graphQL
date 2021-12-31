@@ -40,9 +40,45 @@ const updateStockProduct = async (product, quantity) => {
     }
 }
 
+const getAllProduct = async () => {
+    try{
+        return await Product.find({});
+    }catch (e){
+        throw e;
+    }
+}
+
+const createProduct = async (product) => {
+    try{
+        const product = new Product(product);
+        return await product.save();
+    }catch (e){
+        throw e;
+    }
+}
+
+const updateProduct = async (id, product) => {
+    try{
+        return await Product.findOneAndUpdate({_id: id}, product, {new: true});
+    }catch (e){
+        throw e;
+    }
+}
+
+const deleteProduct = async (id) => {
+    try{
+        await Product.findOneAndDelete({_id: id});
+    }catch (e){
+        throw e;
+    }
+}
 
 module.exports = {
     getProductById,
     validateStockProduct,
-    updateStockProduct
+    updateStockProduct,
+    getAllProduct,
+    createProduct,
+    updateProduct,
+    deleteProduct
 }

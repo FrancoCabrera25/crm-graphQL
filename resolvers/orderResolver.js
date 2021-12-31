@@ -33,9 +33,7 @@ const orderResolver = {
                         }
                     }
 
-                    const newOrder = new Order(input);
-                    newOrder.seller = ctx.user.id;
-                    return await createOrder(newOrder);
+                    return await createOrder(input,ctx.user.id);
                 }
 
             } catch (e) {

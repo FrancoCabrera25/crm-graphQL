@@ -3,8 +3,13 @@ const {errorType, errorName} = require("../constants/errors");
 const {
     ApolloError,
 } = require("apollo-server");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const {
+    getAllProduct,
+    getProductById,
+    createProduct,
+    updateProduct,
+    deleteProduct
+} = require("../services/productService");
 require("dotenv").config({
 
     path: '.env.local'
@@ -23,18 +28,14 @@ const productResolver = {
     Query: {
         getProduct: async () => {
             try {
-                return await Product.find({});
+                return await getAllProduct();
             } catch (e) {
-                console.log(e)
+                return e;
             }
         },
         getProductById: async (_, {id}) => {
             try {
-                const product = await Product.findById(id);
-                if (!product) {
-                    throw new Error("Producto no encontrado");
-                }
-                return product;
+                return await getProductById(id);
             } catch (e) {
                 return e;
             }
@@ -43,37 +44,30 @@ const productResolver = {
     Mutation: {
         createProduct: async (_, {input}) => {
             try {
-                const product = new Product(input);
-                return await product.save();
+                return await createProduct(input);
             } catch (e) {
                 throw new Error("Error al crear un nuevo producto");
             }
         },
         updateProduct: async (_, {id, input}) => {
             try {
-                let product = await Product.findById(id);
-                if (!product) {
-                    throw new Error("Producto no encontrado");
+                let product = await getProductById(id);
+                if (product) {
+                    return await updateProduct(id, input);
                 }
-
-                return await Product.findOneAndUpdate({_id: id}, input, {new: true});
-
             } catch (e) {
                 return e;
             }
         },
         deleteProduct: async (_, {id}, ctx) => {
             try {
-            //    if (isUserAutorizado(ctx)) {
-                    let product = await Product.findById(id);
-                    if (!product) {
-                        throw new CustomError("Producto no encontrado", errorName.INTERNAL_ERROR_SERVER);
-                    }
-
-                    await Product.findOneAndDelete({_id: id});
-
-                    return "Producto eliminado correctamente";
-               // }
+                //    if (isUserAutorizado(ctx)) {
+                let product = await getProductById(id);
+                if (product) {
+                    await deleteProduct(id);
+                }
+                return "Producto eliminado correctamente";
+                // }
             } catch
                 (e) {
                 return e;
