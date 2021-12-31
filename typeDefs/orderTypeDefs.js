@@ -13,14 +13,15 @@ const orderTypeDefs = gql`
       }
       
       type OrderProductType {
-           id: ID!,
+           id: ID!
            quantity: Int
        }
       
        input OrderProductInput {
-           id: ID!,
+           id: ID
            quantity: Int
        }
+       
        input OrderInput {
              order: [OrderProductInput]
              total: Float!
@@ -35,7 +36,7 @@ const orderTypeDefs = gql`
       }
        type Query {
             #Order
-
+            getOrder(id: ID): String   
         }
 
         type Mutation {
