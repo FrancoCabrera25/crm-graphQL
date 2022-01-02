@@ -1,9 +1,10 @@
 const Order = require("../models/order");
 const {getClientByID, isClientSellerSameUserContext} = require("../services/clientServices");
-const {validateStockProduct, updateStockProduct} = require("../services/productService");
-const {createOrder, getAllOrder, getOrderBySeller, getOrderById } = require('../services/orderServices');
+const {validateStockProduct, updateStockProduct, getProductById} = require("../services/productService");
+const {createOrder, getAllOrder, getOrderBySeller, getOrderById, updateOrder } = require('../services/orderServices');
 const {errorName} = require("../constants/errors");
 const customError = require("../utils/customErrors");
+const { ActionUpdateStock } = require("../constants/enums");
 require("dotenv").config({
 
     path: '.env.local'
@@ -19,7 +20,7 @@ const orderResolver = {
                 return e;
             }
         },
-        getOrdersBySeller: async (_, {}, ctx ) => {
+        getOrdersBySeller: async (_, {}, ctx) => {
             return await getOrderBySeller(ctx.user.id);
         },
         getOrderById: async (_, {id}, ctx) => {
@@ -46,17 +47,50 @@ const orderResolver = {
                     for await (const item of order) {
                         const product = await validateStockProduct(item.id, item.quantity);
                         if (product) {
-                            await updateStockProduct(product, item.quantity);
+                            await updateStockProduct(product, item.quantity, ActionUpdateStock.MINUS) ;
                         }
                     }
 
-                    return await createOrder(input,ctx.user.id);
+                    return await createOrder(input, ctx.user.id);
                 }
 
             } catch (e) {
                 return e;
             }
         },
+        updateOrder: async (_, {id, input}, ctx) => {
+            const {client, order} = input;
+            try {
+                const existOrder = await getOrderById(id);
+                console.log('existOrder', existOrder);
+                if (existOrder) {
+                    const existClient = await getClientByID(client);
+                    if(existClient){
+                        const isSameClient = isClientSellerSameUserContext(existClient,ctx.user.id);
+                        if(isSameClient){
+                            for await (const item of order) {
+                                const orderOld = existOrder.order.find(f => f.id === item.id);
+                               if( orderOld.quantity > item.quantity){
+                                   const dif = orderOld.quantity - item.quantity;
+                                   const product = await getProductById(item.id);
+                                   await updateStockProduct(product, dif, ActionUpdateStock.PLUS);
+                               } else if(orderOld.quantity !== item.quantity){
+                                    const product = await validateStockProduct(item.id, item.quantity);
+                                    if (product) {
+                                        await updateStockProduct(product, item.quantity, ActionUpdateStock.MINUS);
+                                    }
+                                }
+                            }
+
+                            return await updateOrder(id, input);
+                        }
+                    }
+                }
+            }catch (e){
+                return e;
+            }
+
+        }
     }
 }
 

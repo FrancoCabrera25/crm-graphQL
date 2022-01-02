@@ -2,8 +2,6 @@ const Product = require("../models/product");
 const {errorName} = require("../constants/errors");
 const customError = require("../utils/customErrors");
 const Order = require("../models/order");
-const Client = require("../models/client");
-
 
 const getOrderById = async (id) => {
     try{
@@ -44,11 +42,18 @@ const createOrder = async (order, seller) => {
     }
 }
 
-
+const updateOrder = async (id, order ) => {
+    try{
+        return await Order.findOneAndUpdate({_id: id}, order, {new: true});
+    }catch (e){
+        throw e;
+    }
+}
 
 module.exports = {
     createOrder,
     getAllOrder,
     getOrderBySeller,
-    getOrderById
+    getOrderById,
+    updateOrder
 }

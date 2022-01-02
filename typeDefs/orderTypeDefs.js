@@ -24,7 +24,7 @@ const orderTypeDefs = gql`
        
        input OrderInput {
              order: [OrderProductInput]
-             total: Float!
+             total: Float
              client: ID!
              state: StateOrder
       }
@@ -44,6 +44,7 @@ const orderTypeDefs = gql`
         type Mutation {
             #Order
              createOrder(input: OrderInput): Order
+             updateOrder(id: ID!, input: OrderInput): Order
         }
  `;
 

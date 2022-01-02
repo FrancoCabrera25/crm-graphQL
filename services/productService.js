@@ -1,6 +1,7 @@
 const Product = require("../models/product");
 const {errorName} = require("../constants/errors");
 const customError = require("../utils/customErrors");
+const {ActionUpdateStock} = require("../constants/enums");
 
 
 const getProductById = async (id) => {
@@ -30,9 +31,14 @@ const validateStockProduct = async (id, quantity) => {
     }
 }
 
-const updateStockProduct = async (product, quantity) => {
+const updateStockProduct = async (product, quantity, action) => {
     try {
-        product.stock = product.stock - quantity;
+        if(ActionUpdateStock.PLUS === action){
+            product.stock = product.stock + quantity;
+        }else{
+            product.stock = product.stock - quantity;
+        }
+
         return await product.save();
 
     } catch (e) {
