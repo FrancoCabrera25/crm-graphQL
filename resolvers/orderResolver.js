@@ -62,7 +62,6 @@ const orderResolver = {
             const {client, order} = input;
             try {
                 const existOrder = await getOrderById(id);
-                console.log('existOrder', existOrder);
                 if (existOrder) {
                     const existClient = await getClientByID(client);
                     if(existClient){
