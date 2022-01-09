@@ -1,7 +1,7 @@
 const Order = require("../models/order");
 const {getClientByID, isClientSellerSameUserContext} = require("../services/clientServices");
 const {validateStockProduct, updateStockProduct, getProductById} = require("../services/productService");
-const {createOrder, getAllOrder, getOrderBySeller, getOrderById, updateOrder } = require('../services/orderServices');
+const {createOrder, getAllOrder, getOrderBySeller, getOrderById, updateOrder, deleteOrder, getOrderByState } = require('../services/orderServices');
 const {errorName} = require("../constants/errors");
 const customError = require("../utils/customErrors");
 const { ActionUpdateStock } = require("../constants/enums");
@@ -34,6 +34,9 @@ const orderResolver = {
             } catch (e) {
                 return e;
             }
+        },
+        getOrderByState: async (_,{state}, ctx) => {
+                return await  getOrderByState(state, ctx.user.id);
         }
     },
     Mutation: {
@@ -88,7 +91,14 @@ const orderResolver = {
             }catch (e){
                 return e;
             }
+        },
+        deleteOrder: async (_,{id}, ctx) => {
+            const existOrder = await getOrderById(id);
+            if (existOrder) {
+              await deleteOrder(id);
+            }
 
+            return 'Pedido eliminado correctamente';
         }
     }
 }
