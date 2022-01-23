@@ -79,6 +79,14 @@ const deleteProduct = async (id) => {
     }
 }
 
+const getProductByName = async (name) => {
+    try{
+        return await  Product.find({$text: { $search: name}});
+    }catch (e){
+        throw  e
+    }
+}
+
 module.exports = {
     getProductById,
     validateStockProduct,
@@ -86,5 +94,6 @@ module.exports = {
     getAllProduct,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getProductByName
 }

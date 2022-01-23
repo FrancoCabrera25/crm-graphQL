@@ -13,6 +13,11 @@ const userTypeDefs = gql`
       type Token {
             token: String
       }
+      
+      type SellerTop {
+        total: Float
+        seller: User
+      }
         
       input UserInput {
             name: String!
@@ -29,6 +34,7 @@ const userTypeDefs = gql`
       type Query {
             # User
             getUser(token: String!): User 
+            getBestSeller: [SellerTop]   
        }
        
        type Mutation {

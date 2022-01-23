@@ -19,7 +19,8 @@ const productTypeDefs = gql`
        type Query {
              # Product
              getProduct: [Product]
-           getProductById(id: ID!): Product
+             getProductById(id: ID!): Product
+             getProductByName(name: String!): [Product]
         }
 
         type Mutation {

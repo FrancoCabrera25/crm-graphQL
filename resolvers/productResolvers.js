@@ -8,7 +8,8 @@ const {
     getProductById,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getProductByName
 } = require("../services/productService");
 require("dotenv").config({
 
@@ -40,6 +41,9 @@ const productResolver = {
                 return e;
             }
         },
+        getProductByName: async (_, {name}) => {
+            return await getProductByName(name);
+       },
     },
     Mutation: {
         createProduct: async (_, {input}) => {

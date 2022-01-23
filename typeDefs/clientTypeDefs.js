@@ -12,12 +12,17 @@ const clientTypeDefs = gql`
             dni: String
              seller: ID
       }
+      
+      type ClientTop {
+         total: Float
+         client: Client
+      }
 
        input ClientInput {
              name: String!
              lastname: String!
              company: String!
-            email: String!
+             email: String!
              phone: String
              dni: String!
       }
@@ -27,6 +32,7 @@ const clientTypeDefs = gql`
             getClients: [Client]
             getClientsBySeller: [Client]
             getClientByID(id: ID!): Client
+            getBestClient: [ClientTop]
         }
 
         type Mutation {

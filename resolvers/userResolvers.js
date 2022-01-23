@@ -1,6 +1,5 @@
 const User = require("../models/user");
-const Product = require("../models/product");
-const Client = require("../models/client");
+const {getOrdersInBestSeller} = require('../services/orderServices')
 const {errorType, errorName} = require("../constants/errors");
 const {
     ApolloError,
@@ -39,6 +38,10 @@ const userResolver = {
             const userId = await jwt.verify(token, process.env.CLAVE_SECRETA);
             return userId;
         },
+
+        getBestClient: async () => {
+                return await getOrdersInBestSeller();
+        }
     },
     Mutation: {
         createUser: async (_, {input}) => {

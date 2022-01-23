@@ -2,9 +2,7 @@ const Client = require("../models/client");
 const {errorType, errorName} = require("../constants/errors");
 const customError = require("../utils/customErrors");
 const { getClientAll, getClientBySeller, getClientByID, getClientByDni, createClient, updateClient, deleteClient } = require("../services/clientServices");
-const {
-    ApolloError,
-} = require("apollo-server");
+const { getOrdersInBestClient } = require('../services/orderServices');
 require("dotenv").config({
 
     path: '.env.local'
@@ -41,7 +39,11 @@ const clientResolver = {
             } catch (e) {
                 return e;
             }
+        },
+        getBestClient: async (_, ctx) => {
+                return await  getOrdersInBestClient();
         }
+
     },
     Mutation: {
         createClient: async (_, {input}, ctx) => {
