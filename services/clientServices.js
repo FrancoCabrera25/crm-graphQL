@@ -30,7 +30,7 @@ const getClientAll = async () => {
     try{
         return await Client.find({});
     }catch (e){
-        throw e;
+        throw new customError("", errorName.INTERNAL_ERROR_GET_ALL_CLIENT);
     }
 }
 
@@ -53,7 +53,7 @@ const getClientByDni = async (dni) => {
 const createClient = async (client, seller) => {
     try{
         const newClient = new Client(client);
-        client.seller = seller;
+        newClient.seller = seller;
         return await newClient.save();
     }catch (e){
         throw e;

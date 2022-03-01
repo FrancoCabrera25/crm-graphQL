@@ -34,7 +34,6 @@ const server = new ApolloServer({
         const authToken = header.replace('Bearer ', '');
         try{
             if(authToken){
-                console.log('authToken', authToken);
                const user = jwt.verify(authToken, process.env.CLAVE_SECRETA);
                 if(user){
                     return {
@@ -42,13 +41,7 @@ const server = new ApolloServer({
                         authToken,
                     }
                 }
-             //   throw new customError('', errorName.UNAUTHORIZED);
-               // throw new AuthenticationError(errorName.UNAUTHORIZED);
             }
-          //  else{
-             //  throw new customError('', errorName.UNAUTHORIZED);
-               // throw new AuthenticationError(errorName.UNAUTHORIZED);
-           // }
         }
         catch (e){
            // console.log('e', e);

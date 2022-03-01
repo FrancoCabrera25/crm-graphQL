@@ -35,13 +35,15 @@ const clientResolver = {
       try {
         if (isUserAutorizado(ctx)) {
           const seller = ctx.user.id;
+          console.log(ctx.user.id);
           return await getClientBySeller(seller);
         }
       } catch (e) {
-        return customError(
-          "",
-          errorName.INTERNAL_ERROR_GET_ALL_CLIENT_BY_SELLER
-        );
+        return e
+        // return customError(
+        //   "",
+        //   errorName.INTERNAL_ERROR_GET_ALL_CLIENT_BY_SELLER
+        // );
       }
     },
     getClientByID: async (_, { id }, ctx) => {
@@ -69,7 +71,7 @@ const clientResolver = {
         const { dni } = input;
         const client = await getClientByDni(dni);
         if (client) {
-          throw new CustomError(
+          throw new customError(
             `El client con el dni ${dni} ya se encuentra registrado`,
             errorName.INTERNAL_ERROR_SERVER
           );
