@@ -4,6 +4,7 @@ const resolvers = require("./db/resolvers");
 const  conectDB = require("./config/db");
 const jwt = require("jsonwebtoken");
 const { errorType, errorName} = require("./constants/errors");
+const customError = require("./utils/customErrors");
 
 require("dotenv").config({
 
@@ -33,6 +34,7 @@ const server = new ApolloServer({
         const authToken = header.replace('Bearer ', '');
         try{
             if(authToken){
+                console.log('authToken', authToken);
                const user = jwt.verify(authToken, process.env.CLAVE_SECRETA);
                 if(user){
                     return {
@@ -40,11 +42,17 @@ const server = new ApolloServer({
                         authToken,
                     }
                 }
-                throw new AuthenticationError(errorName.UNAUTHORIZED);
+             //   throw new customError('', errorName.UNAUTHORIZED);
+               // throw new AuthenticationError(errorName.UNAUTHORIZED);
             }
+          //  else{
+             //  throw new customError('', errorName.UNAUTHORIZED);
+               // throw new AuthenticationError(errorName.UNAUTHORIZED);
+           // }
         }
         catch (e){
-            throw new AuthenticationError(errorName.UNAUTHORIZED);
+           // console.log('e', e);
+            throw e;
         }
     },
     formatError:(err) => {

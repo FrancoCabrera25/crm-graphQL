@@ -33,7 +33,7 @@ const userTypeDefs = gql`
                    
       type Query {
             # User
-            getUser(token: String!): User 
+            getUser: User 
             getBestSeller: [SellerTop]   
        }
        

@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const {getOrdersInBestSeller} = require('../services/orderServices')
-const {errorType, errorName} = require("../constants/errors");
+const isUserAutorizado = require('../utils/validateAuth');
 const {
     ApolloError,
 } = require("apollo-server");
@@ -24,19 +24,15 @@ class CustomError extends ApolloError {
     }
 }
 
-const isUserAutorizado = (context) => {
-    if (!context.user) {
-        throw new CustomError('Usuario no autorizado', errorName.UNAUTHORIZED);
-    }
-    return true;
-}
+
 
 // resolvers
 const userResolver = {
     Query: {
-        getUser: async (_, {token}) => {
-            const userId = await jwt.verify(token, process.env.CLAVE_SECRETA);
-            return userId;
+        getUser: async (_, {}, ctx) => {
+            isUserAutorizado(ctx)
+           // const userId = await jwt.verify(token, process.env.CLAVE_SECRETA);
+            return ctx.user;
         },
 
         getBestClient: async () => {
